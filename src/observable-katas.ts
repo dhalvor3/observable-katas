@@ -1,5 +1,6 @@
-import { concat, Observable, of, Subscription, timer } from 'rxjs'
+import { concat, observable, Observable, of, Subscriber, Subscription, timer } from 'rxjs'
 import { catchError, filter, map, reduce, startWith, take} from 'rxjs/operators';
+import { skipPartiallyEmittedExpressions } from 'typescript';
 import { HttpClient } from './http-client.interface'
 
 /**
@@ -31,7 +32,8 @@ export class RXJSKatas {
    * (which you can read about here:  https://rxjs-dev.firebaseapp.com/api/index/function/of).
    */
   static createFromArray(theArray: number[]):Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return of(...theArray); // TODO: Replace this return value with the value specified in the comment above.
+    //... spread operator that takes each element in the array and passes them sequentially to the function
   }
 
   /**
@@ -40,8 +42,9 @@ export class RXJSKatas {
    * observable and return it.  All you need to do is pass this function into the Observable constructor
    * (remember to use the `new` keyword when invoking your constructor!)
    */
-  static createFromFunction(theFunction): Observable<any> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+   static createFromFunction(theFunction): Observable<any> {
+    return new Observable(theFunction); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -54,7 +57,11 @@ export class RXJSKatas {
    * observable to emit using `subscriber.next()`.
    */
   static createObservable123Immediate():Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return new Observable(subscriber => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.next(3);});
+     // TODO: Replace this return value with the value specified in the comment above.
   }
   /**
    * There are many more ways to create observables (e.g. from DOM events, from ajax requests, etc.)
@@ -70,7 +77,10 @@ export class RXJSKatas {
 
   static subscribeToObservable<Type>(observableToSubscribe: Observable<Type>):void {
     // TODO: Subscribe to the passed-in observable.
-  }
+      observableToSubscribe.subscribe(emission => console.log(emission));
+      }
+       
+  
 
   /**
    * The .subscribe method returns a Subscription object.  In order to make your apps as memory-efficient
@@ -81,7 +91,8 @@ export class RXJSKatas {
    * code that unsubscribes from the passed-in subscription.
    */
   static unsubscribeFromObservable<Type>(subscription: Subscription):void {
-    return; // TODO: Unsubscribe the passed-in subscription
+    return subscription.unsubscribe(); 
+    // TODO: Unsubscribe the passed-in subscription
   }
 
   /**
@@ -99,8 +110,11 @@ export class RXJSKatas {
    * result of piping `observableToPipe` through `pipingFunction`.
    */
   static pipeObservableThroughFunction<Type>(observableToPipe: Observable<Type>, pipingFunction: Function): Observable<Type> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
-  }
+ // TODO: Replace this return value with the value specified in the comment above.
+    return  observableToPipe.pipe(
+        pipingFunction()
+      );
+   }
   
   /**
   * .pipe is commonly used for applying rxjs "transformation operators".  Transformation operators, when
@@ -128,7 +142,7 @@ export class RXJSKatas {
   */
 
   static mapObservable(originalObs: Observable<number>): Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return originalObs.pipe(map (number => number *2)); // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -138,16 +152,18 @@ export class RXJSKatas {
    */
   
   static appendToStart<Type>(obs: Observable<Type>, numberToAppend:Type):Observable<Type> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return obs.pipe (startWith (numberToAppend)); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
-   * Let's try a few more.  Use the filter operator to filter the items in an observable using a callback
-   * function. 
+   * Let's try a few more.  Use the filter operator to filter the items in an observable 
+   * using a callback function. 
    */
 
   static filterObservable(observableToPipe: Observable<number>): Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+      return observableToPipe.pipe (filter (number => number / 2 > 0)); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
 
