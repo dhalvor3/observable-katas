@@ -1,4 +1,5 @@
-import { concat, observable, Observable, of, Subscriber, Subscription, timer } from 'rxjs'
+import { concat, observable, Observable, of, Subscriber, Subscription, interval, timer } from 'rxjs'
+import { ObserveOnSubscriber } from 'rxjs/internal/operators/observeOn';
 import { catchError, filter, map, reduce, startWith, take} from 'rxjs/operators';
 import { skipPartiallyEmittedExpressions } from 'typescript';
 import { HttpClient } from './http-client.interface'
@@ -71,8 +72,8 @@ export class RXJSKatas {
    * After you create an observable, you can access the values emitted by the observable using the 
    * .subscribe method.  This method invokes a callback function for each emission from the observable.
    * 
-   * Try it out below!  Subscribe to the method with a function that logs each emission from the 
-   * observable to the console.
+   * Try it out below!  Subscribe to the observable using the .subscribe method with a function that 
+   * logs each emission from the observable to the console.
    */
 
   static subscribeToObservable<Type>(observableToSubscribe: Observable<Type>):void {
@@ -162,7 +163,7 @@ export class RXJSKatas {
    */
 
   static filterObservable(observableToPipe: Observable<number>): Observable<number> {
-      return observableToPipe.pipe (filter (number => number / 2 > 0)); 
+      return observableToPipe.pipe (filter (number => number % 2 === 0)); 
     // TODO: Replace this return value with the value specified in the comment above.
   }
 
@@ -172,7 +173,8 @@ export class RXJSKatas {
    */
 
   static reduceObservable(observableToPipe: Observable<number>): Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return observableToPipe.pipe (reduce((acc,curr) => acc + curr, 0));
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -183,7 +185,8 @@ export class RXJSKatas {
    */
 
   static createObservable123delay():Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return timer(0, 50).pipe(map((num, idx) => idx + 1), take (3)); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
   
   /**
@@ -202,7 +205,8 @@ export class RXJSKatas {
    */
 
   static issueGetRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return httpClient.get('https://www.quotes4u.com/cervantes'); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -212,7 +216,8 @@ export class RXJSKatas {
    */
 
   static issuePostRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return httpClient.post('https://www.quotes4u.com/hugo', {quote: 'Life is the flower for which love is the honey.'} ); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -220,7 +225,9 @@ export class RXJSKatas {
    * human face.'}` to the URL `https://www.quotes4u.com/hugo/0` to update our previous quote.
    */
   static issuePatchRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return httpClient.patch(`https://www.quotes4u.com/hugo/0`, 
+      {quote: 'Laughter is the sun that drives winter from the human face.'}); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
   
   /**
@@ -228,7 +235,8 @@ export class RXJSKatas {
    * `https://www.quotes4u.com/hugo/0`
    */
   static issueDeleteRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return httpClient.delete (`https://www.quotes4u.com/hugo/0`); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -240,6 +248,8 @@ export class RXJSKatas {
    * your request through `catchError`!)
    */
   static issueGetRequestCatchError(httpClient: HttpClient, errorHandler: (err, caught) => Observable<object>):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above. 
+    return httpClient.get('https://www.quotes4u.com/hugo')
+      .pipe(catchError(errorHandler)); 
+    // TODO: Replace this return value with the value specified in the comment above. 
   }
 }
